@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Alaska Galerí · galería</title>
+  <style>
+     /* Reset y configuración base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+       @font-face {
+        font-family: 'olo';
+        src: url(Supreme-Bold.otf);
+       }
+
+    body {
+      font-family: "olo";
+      background: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    /* contenedor principal que centra todo */
+    .contenedor-principal {
+      max-width: 1200px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    /* --- TÍTULO MODIFICADO: alaska arriba, galeri abajo --- */
+    .titulo-dividido {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.1;
+      text-transform: lowercase; /* para que coincida con la solicitud original "alaska galeri" */
+    }
+
+    .titulo-arriba {
+      font-size: clamp(2.8rem, 12vw, 5rem);
+      font-weight: 350;
+      color: #000000;
+      letter-spacing: 6px;
+    }
+
+    .titulo-abajo {
+      font-size: 12px;
+      font-weight: 300;
+      color: #000000;
+      letter-spacing: 8px;
+      margin-top: -0.3rem;
+      margin-block-end: 8rem;
+    }
+
+    /* logo (imagen simulada con un div decorativo) */
+    .logo-placeholder {
+      width: 160px;
+      height: 160px;
+      background: #cccf0d;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #e3f543;
+      background-image: radial-gradient(circle at 30% 30%, #ffffff, #ffffff);
+      box-shadow: 0 8px 16px rgba(0,20,30,0.2);
+      transition: transform 0.2s ease;
+      margin: 0.5rem 0 0.3rem;
+      scale: .3;
+      opacity: 100%;
+    }
+    .logo-placeholder2 {
+      width: 160px;
+      height: 160px;
+      background: #a0b9ce;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #ffffffcc;
+      background-image: radial-gradient(circle at 30% 30%, #ffffff, #ffffff);
+      box-shadow: 0 8px 16px rgba(0,20,30,0.2);
+      transition: transform 0.2s ease;
+      margin: 0.5rem 0 25rem;
+      scale: .3;
+    }
+
+    .logo-placeholder:hover {
+      transform: scale(1.02);
+    }
+
+    .logo-texto {
+      font-weight: 300;
+      background: rgba(0,0,0,0.2);
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      backdrop-filter: blur(2px);
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      border: 1px solid #ffffff50;
+    }
+
+    /* sección "disponibles" */
+    .seccion-disponibles {
+      width: 100%;
+      text-align: right;
+      margin-top: 3rem;
+    }
+
+    .encabezado-disponibles {
+      font-size: 2.2rem;
+      font-weight: 350;
+      color: #000000;
+      margin-bottom: 1rem;
+      border-bottom: 1px dashed #ffffff;
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    /* --- CONTENEDOR CON BARRA DE DESPLAZAMIENTO ESTÁNDAR (COMO FIREFOX) --- */
+    .galeria-scroll {
+      background-color: #ffffff;
+      border: 2px solid #ffffff;
+      border-radius: 22px;
+      padding: 1.8rem 1.2rem;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.03), 0 10px 18px -8px rgba(33,38,45,0.2);
+      
+      /* Scroll vertical: eliminamos personalización, usamos scrollbar estándar del sistema */
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: 460px;
+
+      /* scrollbar-color eliminado → se usa el por defecto del navegador (Firefox grande/clásico) */
+      /* scrollbar-width: auto; por defecto es auto en Firefox, que es más ancho */
+    }
+
+    /* Para Firefox, aseguramos que use la barra predeterminada (sin thin) */
+    @supports (scrollbar-width: auto) {
+      .galeria-scroll {
+        scrollbar-width: auto;   /* firefox usará su barra predeterminada (ancha) */
+      }
+    }
+
+    /* cuadrícula de miniaturas */
+    .grid-miniaturas {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1.2rem;
+      justify-items: center;
+      align-items: start;
+    }
+
+    /* cada miniatura */
+    .miniatura-item {
+      width: 100%;
+      max-width: 180px;
+      cursor: pointer;
+      border-radius: 18px;
+      background: rgb(255, 164, 250);
+      box-shadow: 0 8px 14px -6px rgba(0, 20, 30, 0.25);
+      transition: all 0.2s ease;
+      border: 2px solid #ffffff;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .miniatura-item:hover {
+      transform: scale(1.03);
+      border-color: #ffffff;
+      box-shadow: 0 14px 20px -8px #1e3b4e70;
+    }
+
+    .miniatura-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #ffffff;
+    }
+
+    /* pie de página con contacto */
+    .pie-contacto {
+      text-align: center;
+      margin-top: 1.2rem;
+      padding: 1.5rem 1.8rem;
+      background: #ffffff;
+      backdrop-filter: blur(4px);
+      border-radius: 70px;
+      border: 1px solid #ffffff;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .pie-contacto h3 {
+      font-size: 2rem;
+      font-weight: 350;
+      color: #000000;
+      letter-spacing: 0.5px;
+    }
+
+    /* --- TELÉFONO CON ENLACE A WHATSAPP (direcciona a chat) --- */
+    .telefono-wa {
+      display: inline-block;
+      font-size: 2.1rem;
+      font-weight: 500;
+      color: #000000;
+      background: #ffffff;
+      padding: 0.3rem 1.8rem;
+      border-radius: 60px;
+      margin-top: 0.4rem;
+      border: 1px solid #ffffff;
+      box-shadow: 0 3px 0 #cedce9;
+      text-align: left;
+      font-family: 'olo';
+      text-decoration: none;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .telefono-wa:hover {
+      background: #ff60ea;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 0 #ffffff;
+    }
+
+    .telefono-wa:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #ffffff;
+    }
+
+    /* --- NUEVO PIE: "hecho en México" con icono de aguja 💉 (inyección) --- */
+    .hecho-mexico {
+      font-size: 1.2rem;
+      color: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 1rem;
+      background: #fdfdfd;
+      padding: 0.5rem 1.8rem;
+      border-radius: 60px;
+      border: 1px solid #ffffff;
+      font-weight: 350;
+    }
+
+    .hecho-mexico i {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+
+    /* ventana modal simple para ver imagen ampliada */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(10, 22, 33, 0.85);
+      backdrop-filter: blur(5px);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+    }
+
+    .modal-contenido {
+      max-width: 90vw;
+      max-height: 90vh;
+      background: transparent;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 30px 50px rgba(0,10,20,0.7);
+      transition: transform 0.2s;
+      transform: scale(0.98);
+    }
+
+    .modal-contenido img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 24px;
+      border: 4px solid white;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-overlay.active .modal-contenido {
+      transform: scale(1);
+    }
+
+    /* optimización táctil y foco */
+    .miniatura-item:focus-visible {
+      outline: 4px solid #cfcfcf;
+      outline-offset: 2px;
+    }
+
+    /* pequeño ajuste de espaciado */
+    .nota-demo {
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor-principal">
+    
+    <!-- TÍTULO MODIFICADO: "alaska" arriba / "galeri" abajo -->
+    <div class="titulo-dividido">
+      <span class="titulo-arriba">Alaska</span>
+      <span class="titulo-arriba">galeri</span>
+    </div>
+
+    <!-- Imagen de logo -->
+    <div class="logo-placeholder" aria-label="Logo de Alaska Galerí">
+      <img src="ngel handpook.jpg" alt="" srcset="">
+      <span class="logo-texto"></span>
+     
+    </div>
+
+    <!-- Sección "disponibles" con cuadro de scroll estándar (como Firefox) -->
+    <section class="seccion-disponibles">
+      <h2 class="encabezado-disponibles">hi world</h2>
+
+      <!-- cuadro con scroll estándar (sin personalización de colores) -->
+      <div class="galeria-scroll" id="galeriaScroll">
+        <div class="grid-miniaturas" id="gridMiniaturas">
+          <!-- Las miniaturas se generan con javascript -->
+        </div>
+      </div>
+    </section>
+     
+
+    </div>
+    <!-- Pie con contacto y teléfono clickeable a WhatsApp -->
+    <footer class="pie-contacto">
+      <h3>agenda tu cita aqui c:</h3>
+      <!-- Número modificable: +52 555 123 4567 lleva a WhatsApp con mensaje predefinido -->
+      <a class="telefono-wa" href="https://wa.me/525533573107" target="_blank" rel="noopener noreferrer">
+        55 3357 3107
+      </a>
+    </footer>
+
+    <!-- TEXTO "hecho en México" CON ICONO DE AGUJA (inyección) -->
+    <div class="hecho-mexico">
+      </i> NEZAYORK ECATEBRONX</i>
+    </div>
+  </div>
+
+  <!-- Modal para imagen ampliada -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-contenido" id="modalContenido">
+      <img src="" alt="Imagen ampliada" id="modalImagen">
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const grid = document.getElementById('gridMiniaturas');
+      const modalOverlay = document.getElementById('modalOverlay');
+      const modalImg = document.getElementById('modalImagen');
+
+      function crearMiniatura(src, alt = 'obra disponible') {
+        const item = document.createElement('div');
+        item.className = 'miniatura-item';
+        item.setAttribute('tabindex', '0');
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = alt;
+        img.loading = 'lazy';
+        item.appendChild(img);
+
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          modalImg.src = src;
+          modalImg.alt = alt;
+          modalOverlay.classList.add('active');
+        });
+
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            modalImg.src = src;
+            modalImg.alt = alt;
+            modalOverlay.classList.add('active');
+          }
+        });
+        return item;
+      }
+
+      // Lista de imágenes variadas
+      const imagenes = [
+        'ngel handpook.jpg',
+        'R-bitch.jpg',
+        'R-nasty.jpg',
+        'R-panter.jpg',
+        'R-Panter2.jpg',
+        'T-conejosiames.jpg',
+        'T-ConejoTrizte.jpg',
+        'R-raton.jpg',
+        'R-raton2.jpg',
+        'T-kpew.jpg',
+        'V-bird.jpg',
+        'V-cruz.jpg',
+        'T-mascara.jpg',
+        'V-espada.jpg',
+        'V-garra.jpg',
+        'V-puerco.jpg',
+        'V-rosa.jpg',
+        'V-rosa2.jpg',
+        'V-sarcofago.jpg',
+        'V-snake.jpg',
+      ];
+
+      // Seleccionamos 18 imágenes al azar para llenar la galería
+      const seleccionadas = imagenes.sort(() => 0.5 - Math.random()).slice(0, 20);
+
+      seleccionadas.forEach((url, index) => {
+        const srcConParam = url + (url.includes('?') ? '&v=' : '?v=') + index;
+        const miniatura = crearMiniatura(srcConParam, `Alaska obra ${index+1}`);
+        grid.appendChild(miniatura);
+      });
+
+      // Cerrar modal al hacer clic en overlay
+      modalOverlay.addEventListener('click', function() {
+        modalOverlay.classList.remove('active');
+        modalImg.src = '';
+      });
+
+      document.getElementById('modalContenido').addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+          modalOverlay.classList.remove('active');
+          modalImg.src = '';
+        }
+      });
+    })();
+  </script>
+
+  <!-- mensaje si no hay JS (no afecta) -->
+  <noscript>
+    <style>.grid-miniaturas:after { content: "Habilitá JavaScript para ver la galería."; }</style>
+  </noscript>
+</body>
+</html>
